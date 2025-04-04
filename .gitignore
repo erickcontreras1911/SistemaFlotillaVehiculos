@@ -1,0 +1,13 @@
+# Ignorar dependencias
+client/node_modules/
+server/node_modules/
+
+# Ignorar variables de entorno
+*.env
+
+# Ignorar builds o dist
+dist/
+build/
+
+# Ignorar otros archivos temporales
+.DS_Store

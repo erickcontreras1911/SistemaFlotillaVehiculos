@@ -1,0 +1,30 @@
+// server/index.js
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+const PORT = 3001;
+
+app.use(cors());
+app.use(express.json());
+
+// RUTA PARA EMPLEADOS
+const empleadosRoutes = require("./routes/empleados");
+app.use("/api/empleados", empleadosRoutes);
+
+//RUTA PARA VEHÍCULOS
+const vehiculosRoutes = require("./routes/vehiculos");
+app.use("/api/vehiculos", vehiculosRoutes);
+
+//RUTA PARA ASIGNACIÓN DE VEHÍCULOS
+const asignacionRoutes = require("./routes/asignacion");
+app.use("/api/asignacion", asignacionRoutes);
+
+//RUTA PARA POLIZAS
+const polizasRoutes = require("./routes/polizas");
+app.use("/api/polizas", polizasRoutes);
+
+
+app.listen(PORT, () => {
+  console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
+});
