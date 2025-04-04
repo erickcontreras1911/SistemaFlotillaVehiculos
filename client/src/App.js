@@ -1,12 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 
-//IMPORTACIONES PARA RUTAS
+//ESTAS SON LAS IMPORTACIONES PARA LAS RUTAS NECESARIAS
+//EMPLEADOS
 import AgregarEmpleado from "./pages/empleados/AgregarEmpleado";
 import ConsultarEmpleado from "./pages/empleados/ConsultarEmpleado";
 import DetalleEmpleado from "./pages/empleados/DetalleEmpleado";
 import EditarEmpleado from "./pages/empleados/EditarEmpleado";
 
+//VEHÍCULOS
 import AgregarVehiculo from "./pages/vehiculos/AgregarVehiculo";
 import AsignarVehiculo from "./pages/vehiculos/AsignarVehiculo";
 import DesasignarVehiculo from "./pages/vehiculos/DesasignarVehiculo";
@@ -14,6 +16,7 @@ import ConsultarVehiculo from "./pages/vehiculos/ConsultarVehiculo";
 import DetalleVehiculo from "./pages/vehiculos/DetalleVehiculo";
 import EditarVehiculo from "./pages/vehiculos/EditarVehiculo";
 
+//POLIZAS
 import AgregarPoliza from "./pages/polizas/AgregarPoliza";
 import ConsultarPoliza from "./pages/polizas/ConsultarPoliza";
 import DetallePoliza from "./pages/polizas/DetallePoliza";
