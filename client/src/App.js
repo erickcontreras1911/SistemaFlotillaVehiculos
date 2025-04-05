@@ -22,6 +22,12 @@ import ConsultarPoliza from "./pages/polizas/ConsultarPoliza";
 import DetallePoliza from "./pages/polizas/DetallePoliza";
 import EditarPoliza from "./pages/polizas/EditarPoliza";
 
+//RECORRIDOS
+import AgregarRecorrido from "./pages/recorridos/AgregarRecorrido";
+import DetalleAgregarRecorrido from "./pages/recorridos/DetalleAgregarRecorrido";
+import ConsultarRecorrido from "./pages/recorridos/ConsultarRecorrido";
+import DetalleRecorrido from "./pages/recorridos/DetalleRecorrido";
+import EditarRecorrido from "./pages/recorridos/EditarRecorrido";
 
 
 import "./App.css";
@@ -47,6 +53,12 @@ function App() {
         <Route path="/polizas/consultar" element={<ConsultarPoliza />} />
         <Route path="/polizas/detalle/:id" element={<DetallePoliza />} />
         <Route path="/polizas/modificar/:id" element={<EditarPoliza />} />
+
+        <Route path="/recorridos/agregar" element={<AgregarRecorrido />} />
+        <Route path="/recorridos/detalle/:idAsignacion" element={<DetalleAgregarRecorrido />} />
+        <Route path="/recorridos/consultar" element={<ConsultarRecorrido />} />
+        <Route path="/recorridos/detallar/:id" element={<DetalleRecorrido />} />
+        <Route path="/recorridos/modificar/:id" element={<EditarRecorrido />} />
 
 
       </Routes>

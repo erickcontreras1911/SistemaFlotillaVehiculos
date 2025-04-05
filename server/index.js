@@ -24,6 +24,10 @@ app.use("/api/asignacion", asignacionRoutes);
 const polizasRoutes = require("./routes/polizas");
 app.use("/api/polizas", polizasRoutes);
 
+//RUTA PARA RECORRIDOS
+const recorridosRoutes = require("./routes/recorridos");
+app.use("/api/recorridos", recorridosRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);

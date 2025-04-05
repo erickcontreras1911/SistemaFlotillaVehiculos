@@ -112,5 +112,34 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+//CONSULTA ASIGNACIONES PARA RECORRIDOS
+// GET /api/asignacion/:idAsignacion
+router.get("/:idAsignacion", async (req, res) => {
+  const { idAsignacion } = req.params;
+  try {
+    const [rows] = await db.execute(`
+      SELECT 
+        a.ID_Empleado,
+        a.ID_Vehiculo,
+        CONCAT(e.Nombres, ' ', e.Apellidos) AS NombrePiloto,
+        CONCAT(v.Placa, ' - ', v.Marca, ' ', v.Linea, ' ', v.Modelo) AS DescripcionVehiculo
+      FROM Vehiculos_Asignados a
+      INNER JOIN Empleados e ON a.ID_Empleado = e.ID_Empleado
+      INNER JOIN Vehiculos v ON a.ID_Vehiculo = v.ID_Vehiculo
+      WHERE a.ID_Asignacion = ?
+    `, [idAsignacion]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Asignación no encontrada" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error al obtener asignación:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
   
   module.exports = router;

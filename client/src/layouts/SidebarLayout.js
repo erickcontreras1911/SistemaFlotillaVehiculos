@@ -35,8 +35,6 @@ const menuItems = [
     subItems: [
       { name: "Agregar Póliza", path: "/polizas/agregar" },
       { name: "Consultar Póliza", path: "/polizas/consultar" },
-      { name: "Modificar Póliza", path: "/polizas/modificar" },
-      { name: "Eliminar Póliza", path: "/polizas/eliminar" },
     ],
   },
   {
@@ -45,8 +43,6 @@ const menuItems = [
     subItems: [
       { name: "Agregar Recorrido", path: "/recorridos/agregar" },
       { name: "Consultar Recorrido", path: "/recorridos/consultar" },
-      { name: "Modificar Recorrido", path: "/recorridos/modificar" },
-      { name: "Eliminar Recorrido", path: "/recorridos/eliminar" },
     ],
   },
   {
