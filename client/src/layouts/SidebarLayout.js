@@ -51,8 +51,6 @@ const menuItems = [
     subItems: [
       { name: "Agregar Mantenimiento", path: "/mantenimientos/agregar" },
       { name: "Consultar Mantenimiento", path: "/mantenimientos/consultar" },
-      { name: "Modificar Mantenimiento", path: "/mantenimientos/modificar" },
-      { name: "Eliminar Mantenimiento", path: "/mantenimientos/eliminar" },
     ],
   },
 ];
