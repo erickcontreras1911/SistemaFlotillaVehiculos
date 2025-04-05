@@ -116,21 +116,21 @@ export default function ConsultarEmpleado() {
                 <td>
                     <div className="d-flex w-100 gap-2">
                         <button
-                        className="btn btn-primary btn-sm flex-fill"
+                        className="btn btn-warning btn-sm flex-fill"
                         onClick={() => navigate(`/empleados/detalle/${emp.ID_Empleado}`)}
                         >
                         <FaEye className="me-1" />
                         Ver más
                         </button>
                         <button
-                        className="btn btn-success btn-sm flex-fill"
+                        className="btn btn-warning btn-sm flex-fill"
                         onClick={() => navigate(`/empleados/modificar/${emp.ID_Empleado}`)}
                         >
                         <FaEdit className="me-1" />
                         Editar
                         </button>
                         <button
-                        className="btn btn-danger btn-sm flex-fill"
+                        className="btn btn-warning btn-sm flex-fill"
                         onClick={() => eliminarEmpleado(emp)}
                         >
                         <FaTrash className="me-1" />
