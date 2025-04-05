@@ -56,6 +56,23 @@ router.post("/agregar", async (req, res) => {
   }
 });
 
+//VEHÍCULOS ACTIVOS PARA MANTENIMIENTO
+router.get("/activos", async (req, res) => {
+  try {
+    const [vehiculos] = await db.execute(`
+      SELECT ID_Vehiculo, Placa, Marca, Linea, Modelo 
+      FROM Vehiculos 
+      WHERE Estatus = 'Activo'
+    `);
+
+    res.json(vehiculos);
+  } catch (error) {
+    console.error("Error al obtener vehículos activos:", error);
+    res.status(500).json({ error: "Error al obtener vehículos activos" });
+  }
+});
+
+
 //CONSULTA VEHICULOS
 router.get("/", async (req, res) => {
   try {

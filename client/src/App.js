@@ -29,6 +29,11 @@ import ConsultarRecorrido from "./pages/recorridos/ConsultarRecorrido";
 import DetalleRecorrido from "./pages/recorridos/DetalleRecorrido";
 import EditarRecorrido from "./pages/recorridos/EditarRecorrido";
 
+//MANTENIMIENTOS
+import AgregarMantenimiento from "./pages/mantenimientos/AgregarMantenimiento";
+import ConsultarMantenimiento from "./pages/mantenimientos/ConsultarMantenimiento";
+import DetalleMantenimiento from "./pages/mantenimientos/DetalleMantenimiento";
+import EditarMantenimiento from "./pages/mantenimientos/EditarMantenimiento";
 
 import "./App.css";
 
@@ -60,6 +65,10 @@ function App() {
         <Route path="/recorridos/detallar/:id" element={<DetalleRecorrido />} />
         <Route path="/recorridos/modificar/:id" element={<EditarRecorrido />} />
 
+        <Route path="/mantenimientos/agregar" element={<AgregarMantenimiento />} />
+        <Route path="/mantenimientos/consultar" element={<ConsultarMantenimiento />} />
+        <Route path="/mantenimientos/detallar/:id" element={<DetalleMantenimiento />} />
+        <Route path="/mantenimientos/modificar/:id" element={<EditarMantenimiento />} />
 
       </Routes>
     </Router>

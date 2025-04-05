@@ -28,6 +28,14 @@ app.use("/api/polizas", polizasRoutes);
 const recorridosRoutes = require("./routes/recorridos");
 app.use("/api/recorridos", recorridosRoutes);
 
+//RUTA PARA MANTENIMIENTOS
+const mantenimientosRoutes = require("./routes/mantenimientos");
+app.use("/api/mantenimientos", mantenimientosRoutes);
+
+//RUTA PARA TALLERES
+const talleresRoutes = require("./routes/talleres");
+app.use("/api/talleres", talleresRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
