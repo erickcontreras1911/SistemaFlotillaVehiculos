@@ -99,7 +99,7 @@ export default function ConsultarPolizas() {
   return (
     <SidebarLayout>
       <div className="container">
-        <h2 className="mb-4 text-success">Pólizas Vigentes - Holis</h2>
+        <h2 className="mb-4 text-success">Pólizas Vigentes</h2>
 
         <table className="table table-hover">
           <thead className="table-dark">
