@@ -52,25 +52,17 @@ export default function DetalleMantenimiento() {
               <input type="text" className="form-control" value={mantenimiento.Vehiculo} readOnly />
             </div>
 
-            <div className="col-md-6 mb-3">
+            <div className="col-md-3 mb-3">
               <label className="form-label">Tipo de Mantenimiento</label>
               <input type="text" className="form-control" value={mantenimiento.Tipo_Mantenimiento} readOnly />
             </div>
 
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
               <label className="form-label">Fecha</label>
               <input type="date" className="form-control" value={mantenimiento.Fecha.split("T")[0]} readOnly />
             </div>
 
-            <div className="col-md-4 mb-3">
-              <label className="form-label">Kilometraje</label>
-              <input type="text" className="form-control" value={mantenimiento.Kilometraje || ""} readOnly />
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <label className="form-label">Costo</label>
-              <input type="text" className="form-control" value={mantenimiento.Costo} readOnly />
-            </div>
+            
 
             <div className="col-8 mb-3">
               <label className="form-label">Título del Mantenimiento</label>
@@ -84,10 +76,40 @@ export default function DetalleMantenimiento() {
 
             <div className="col-12 mb-3">
               <label className="form-label">Descripción</label>
-              <textarea className="form-control" rows="6" value={mantenimiento.Descripcion || ""} readOnly />
+              <textarea className="form-control" rows="8" value={mantenimiento.Descripcion || ""} readOnly />
             </div>
 
-            
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Kilometraje</label>
+              <input type="text" className="form-control" value={mantenimiento.Kilometraje || ""} readOnly />
+            </div>
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Frecuencia Servicio (km)</label>
+              <input
+                type="text"
+                className="form-control"
+                value={mantenimiento.Frecuencia_Servicio || ""}
+                readOnly
+              />
+            </div>
+
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Próximo Servicio (km)</label>
+              <input
+                type="text"
+                className="form-control"
+                value={mantenimiento.Kilometraje_Proximo_Servicio || ""}
+                readOnly
+              />
+            </div>
+
+
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Costo</label>
+              <input type="text" className="form-control" value={mantenimiento.Costo} readOnly />
+            </div>
+
+
           </div>
         </form>
       </div>

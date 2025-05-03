@@ -122,12 +122,19 @@ router.get("/:id", async (req, res) => {
         v.Impuesto_Anio_Actual,
         v.Kilometraje,
         v.Impresion_Tarjeta_Circulacion,
-        CONCAT(e.Nombres, ' ', e.Apellidos) AS Piloto
+        CONCAT(e.Nombres, ' ', e.Apellidos) AS Piloto,
+        (
+          SELECT Kilometraje_Proximo_Servicio
+          FROM Mantenimientos
+          WHERE ID_Vehiculo = v.ID_Vehiculo AND Tipo_Mantenimiento = 'Servicio de Motor'
+          ORDER BY Fecha DESC, ID_Mantenimiento DESC
+          LIMIT 1
+        ) AS Kilometraje_Proximo_Servicio
       FROM Vehiculos v
       LEFT JOIN Vehiculos_Asignados va ON v.ID_Vehiculo = va.ID_Vehiculo
       LEFT JOIN Empleados e ON va.ID_Empleado = e.ID_Empleado
       WHERE v.ID_Vehiculo = ?
-      LIMIT 1
+      LIMIT 1;
     `, [id]);
 
     if (rows.length === 0) {
@@ -245,6 +252,46 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     console.error("Error al eliminar vehículo:", error);
     res.status(500).json({ error: "Error al eliminar vehículo" });
+  }
+});
+
+//KILOMETRAJES
+router.post("/kilometraje", async (req, res) => {
+  const { id_vehiculo, kilometraje_nuevo } = req.body;
+
+  try {
+    // Obtener el kilometraje actual
+    const [[vehiculo]] = await db.execute(
+      "SELECT Kilometraje FROM Vehiculos WHERE ID_Vehiculo = ?",
+      [id_vehiculo]
+    );
+
+    if (!vehiculo) {
+      return res.status(404).json({ error: "Vehículo no encontrado" });
+    }
+
+    const kilometraje_anterior = vehiculo.Kilometraje;
+    const recorrido = kilometraje_nuevo - kilometraje_anterior;
+    const fecha_actual = new Date();
+
+    // Registrar historial
+    await db.execute(
+      `INSERT INTO Historial_Kilometraje 
+      (ID_Vehiculo, Kilometraje_Anterior, Kilometraje_Nuevo, Kilometraje_Recorrido, Fecha_Registro)
+      VALUES (?, ?, ?, ?, ?)`,
+      [id_vehiculo, kilometraje_anterior, kilometraje_nuevo, recorrido, fecha_actual]
+    );
+
+    // Actualizar vehículo
+    await db.execute(
+      "UPDATE Vehiculos SET Kilometraje = ? WHERE ID_Vehiculo = ?",
+      [kilometraje_nuevo, id_vehiculo]
+    );
+
+    res.status(201).json({ message: "Kilometraje actualizado correctamente", recorrido, fecha_actual });
+  } catch (error) {
+    console.error("Error al actualizar kilometraje:", error);
+    res.status(500).json({ error: "Error al actualizar kilometraje" });
   }
 });
 

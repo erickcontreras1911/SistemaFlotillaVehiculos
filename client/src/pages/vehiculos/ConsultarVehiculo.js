@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEye, FaEdit, FaTrash, FaCar } from "react-icons/fa";
+
 
 export default function ConsultarVehiculo() {
   const [vehiculos, setVehiculos] = useState([]);
@@ -156,6 +157,15 @@ export default function ConsultarVehiculo() {
                       <FaEdit className="me-1" />
                       Editar
                     </button>
+
+                    <button
+                      className="btn btn-warning btn-sm flex-fill"
+                      onClick={() => navigate(`/vehiculos/kilometraje/${v.ID_Vehiculo}`)}
+                    >
+                      <FaCar className="me-1" />
+                      Kilometraje
+                    </button>
+
                     <button
                       className="btn btn-danger btn-sm flex-fill"
                       onClick={() => eliminarVehiculo(v)}
@@ -164,6 +174,9 @@ export default function ConsultarVehiculo() {
                       <FaTrash className="me-1" />
                       Eliminar
                     </button>
+
+                   
+
                   </div>
                 </td>
               </tr>

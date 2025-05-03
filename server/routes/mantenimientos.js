@@ -12,7 +12,9 @@ router.post("/", async (req, res) => {
     titulo_mantenimiento,
     descripcion,
     id_taller,
-    costo
+    costo,
+    frecuencia_servicio,
+    kilometraje_proximo_servicio
   } = req.body;
 
   try {
@@ -25,8 +27,10 @@ router.post("/", async (req, res) => {
         Titulo_Mantenimiento,
         Descripcion,
         ID_Taller,
-        Costo
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        Costo,
+        Frecuencia_Servicio,
+        Kilometraje_Proximo_Servicio
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       id_vehiculo,
       tipo_mantenimiento,
@@ -35,15 +39,23 @@ router.post("/", async (req, res) => {
       titulo_mantenimiento,
       descripcion,
       id_taller,
-      costo
+      costo,
+      frecuencia_servicio,
+      kilometraje_proximo_servicio
     ]);
 
-    res.status(201).json({ message: "Mantenimiento registrado exitosamente", id: result.insertId });
+    // ✅ RESPUESTA AL FRONTEND
+    res.status(201).json({
+      message: "Mantenimiento registrado correctamente",
+      id: result.insertId
+    });
+
   } catch (error) {
     console.error("Error al registrar mantenimiento:", error);
     res.status(500).json({ error: "Error al registrar mantenimiento" });
   }
 });
+
 
 // CONSULTAR MANTENIMIENTOS CON DETALLE DE VEHÍCULO Y TALLER
 router.get("/", async (req, res) => {
@@ -84,6 +96,8 @@ router.get("/:id", async (req, res) => {
           m.Costo,
           m.Titulo_Mantenimiento,
           m.Descripcion,
+          m.Frecuencia_Servicio,
+          m.Kilometraje_Proximo_Servicio,
           t.Nombre_Taller
         FROM Mantenimientos m
         INNER JOIN Vehiculos v ON m.ID_Vehiculo = v.ID_Vehiculo
@@ -114,7 +128,9 @@ router.put("/:id", async (req, res) => {
       titulo_mantenimiento,
       descripcion,
       id_taller,
-      costo
+      costo,
+      frecuencia_servicio,
+      kilometraje_proximo_servicio
     } = req.body;
   
     try {
@@ -127,7 +143,9 @@ router.put("/:id", async (req, res) => {
           Titulo_Mantenimiento = ?,
           Descripcion = ?,
           ID_Taller = ?,
-          Costo = ?
+          Costo = ?,
+          Frecuencia_Servicio = ?,
+          Kilometraje_Proximo_Servicio = ?
         WHERE ID_Mantenimiento = ?`,
         [
           id_vehiculo ?? null,
@@ -138,6 +156,8 @@ router.put("/:id", async (req, res) => {
           descripcion ?? null,
           id_taller ?? null,
           costo ?? null,
+          frecuencia_servicio ?? null,
+          kilometraje_proximo_servicio ?? null,
           id
         ]
       );

@@ -34,6 +34,32 @@ export default function DetalleVehiculo() {
 
   if (!vehiculo) return <SidebarLayout><div className="container">Cargando...</div></SidebarLayout>;
 
+  let alerta = null;
+  if (vehiculo.Kilometraje_Proximo_Servicio !== null) {
+    const diferencia = vehiculo.Kilometraje_Proximo_Servicio - vehiculo.Kilometraje;
+
+    if (diferencia < 0) {
+      alerta = (
+        <div className="alert alert-danger">
+          ¡El servicio de motor está vencido por {Math.abs(diferencia)} km!
+        </div>
+      );
+    } else if (diferencia < 1000) {
+      alerta = (
+        <div className="alert alert-warning">
+          Faltan {diferencia} km para el próximo servicio de motor.
+        </div>
+      );
+    } else {
+      alerta = (
+        <div className="alert alert-success">
+          Faltan {diferencia} km para el próximo servicio de motor.
+        </div>
+      );
+    }
+  }
+
+
   return (
     <SidebarLayout>
       <div className="container">
@@ -41,7 +67,7 @@ export default function DetalleVehiculo() {
         <button className="btn btn-secondary mb-4" onClick={() => navigate("/vehiculos/consultar")}>
           <FaArrowLeft className="me-2" /> Volver
         </button>
-
+        {alerta}
         <form>
           <div className="row">
             {Object.entries({

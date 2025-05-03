@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 import Select from "react-select";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export default function AgregarMantenimiento() {
@@ -17,8 +17,11 @@ export default function AgregarMantenimiento() {
     titulo_mantenimiento: "",
     descripcion: "",
     id_taller: "",
-    costo: ""
+    costo: "",
+    frecuencia_servicio: "",
+    kilometraje_proximo_servicio: ""
   });
+  
 
   // Obtener vehículos y talleres
   useEffect(() => {
@@ -26,10 +29,10 @@ export default function AgregarMantenimiento() {
       try {
         const resVehiculos = await fetch("http://localhost:3001/api/vehiculos/activos");
         const resTalleres = await fetch("http://localhost:3001/api/talleres");
-  
+
         const vehiculosData = await resVehiculos.json();
         const talleresData = await resTalleres.json();
-  
+
         setVehiculos(vehiculosData);
         setTalleres(talleresData);
       } catch (error) {
@@ -37,14 +40,63 @@ export default function AgregarMantenimiento() {
         Swal.fire("Error", "No se pudieron cargar los datos", "error");
       }
     };
-  
+
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // Cuando se cambie el tipo de mantenimiento
+    if (formData.tipo_mantenimiento === "Servicio de Motor") {
+      const frecuencia = 7000;
+      setFormData(prev => ({
+        ...prev,
+        frecuencia_servicio: frecuencia,
+        kilometraje_proximo_servicio:
+          parseInt(prev.kilometraje || 0) + frecuencia
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        frecuencia_servicio: "",
+        kilometraje_proximo_servicio: ""
+      }));
+    }
+  }, [formData.tipo_mantenimiento, formData.kilometraje]);
   
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  
+    setFormData((prev) => {
+      let updatedForm = {
+        ...prev,
+        [name]: value
+      };
+  
+      // Si se actualizó tipo de mantenimiento
+      if (name === "tipo_mantenimiento" && value === "Servicio de Motor") {
+        updatedForm.frecuencia_servicio = 7000;
+      }
+  
+      // Si se cambia el tipo y no es Servicio de Motor
+      if (name === "tipo_mantenimiento" && value !== "Servicio de Motor") {
+        updatedForm.frecuencia_servicio = "";
+      }
+  
+      // Recalcular el próximo servicio si hay kilometraje y frecuencia
+      const km = parseInt(updatedForm.kilometraje);
+      const frecuencia = parseInt(updatedForm.frecuencia_servicio);
+  
+      if (!isNaN(km) && !isNaN(frecuencia)) {
+        updatedForm.kilometraje_proximo_servicio = km + frecuencia;
+      } else {
+        updatedForm.kilometraje_proximo_servicio = "";
+      }
+  
+      return updatedForm;
+    });
   };
+  
 
   const vehiculoOptions = vehiculos.map(v => ({
     value: v.ID_Vehiculo,
@@ -53,15 +105,18 @@ export default function AgregarMantenimiento() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      const res = await fetch("http://localhost:3001/api/mantenimientos", {
+      const response = await fetch("http://localhost:3001/api/mantenimientos", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-
-      if (res.ok) {
-        Swal.fire("Éxito", "Mantenimiento registrado correctamente", "success");
+  
+      if (response.ok) {
+        Swal.fire("Mantenimiento registrado", "El registro fue exitoso", "success");
         setFormData({
           id_vehiculo: "",
           tipo_mantenimiento: "",
@@ -70,17 +125,23 @@ export default function AgregarMantenimiento() {
           titulo_mantenimiento: "",
           descripcion: "",
           id_taller: "",
-          costo: ""
+          costo: "",
+          frecuencia_servicio: "",
+          kilometraje_proximo_servicio: ""
         });
         navigate("/mantenimientos/consultar");
       } else {
-        Swal.fire("Error", "No se pudo registrar el mantenimiento", "error");
+        const errorData = await response.json();
+        Swal.fire("Error", errorData.error || "No se pudo registrar el mantenimiento", "error");
       }
+  
     } catch (error) {
       console.error("Error:", error);
-      Swal.fire("Error", "Error de red", "error");
+      Swal.fire("Error", "Hubo un problema al guardar el mantenimiento", "error");
     }
   };
+  
+  
 
   return (
     <SidebarLayout>
@@ -91,16 +152,16 @@ export default function AgregarMantenimiento() {
 
             {/* Vehículo */}
             <div className="col-md-12 mb-3">
-                <label className="form-label">Vehículo *</label>
-                <Select
-                    options={vehiculoOptions}
-                    value={vehiculoOptions.find(opt => opt.value === parseInt(formData.id_vehiculo))}
-                    onChange={selected => {
-                        setFormData(prev => ({ ...prev, id_vehiculo: selected.value }));
-                    }}
-                    placeholder="Seleccione un vehículo..."
-                    isSearchable
-                />
+              <label className="form-label">Vehículo *</label>
+              <Select
+                options={vehiculoOptions}
+                value={vehiculoOptions.find(opt => opt.value === parseInt(formData.id_vehiculo))}
+                onChange={selected => {
+                  setFormData(prev => ({ ...prev, id_vehiculo: selected.value }));
+                }}
+                placeholder="Seleccione un vehículo..."
+                isSearchable
+              />
             </div>
 
 
@@ -117,6 +178,7 @@ export default function AgregarMantenimiento() {
                 <option value="">Seleccione tipo</option>
                 <option value="Correctivo">Correctivo</option>
                 <option value="Preventivo">Preventivo</option>
+                <option value="Servicio de Motor">Servicio de Motor</option>
                 <option value="Otro">Otro</option>
               </select>
             </div>
@@ -134,31 +196,7 @@ export default function AgregarMantenimiento() {
               />
             </div>
 
-            {/* Kilometraje */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label">Kilometraje</label>
-              <input
-                type="number"
-                name="kilometraje"
-                className="form-control"
-                value={formData.kilometraje}
-                onChange={handleChange}
-              />
-            </div>
-
-            {/* Costo */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label">Costo</label>
-              <input
-                type="number"
-                step="0.01"
-                name="costo"
-                className="form-control"
-                value={formData.costo}
-                onChange={handleChange}
-              />
-            </div>
-
+           
             {/* Titulo */}
             <div className="col-12 mb-3">
               <label className="form-label">Título del Mantenimiento *</label>
@@ -183,6 +221,58 @@ export default function AgregarMantenimiento() {
                 onChange={handleChange}
               />
             </div>
+
+             {/* Kilometraje actual */}
+             <div className="col-md-3 mb-3">
+              <label className="form-label">Kilometraje *</label>
+              <input
+                type="number"
+                name="kilometraje"
+                className="form-control"
+                value={formData.kilometraje}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Frecuencia servicio */}
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Frecuencia de Servicio (km) *</label>
+              <input
+                type="number"
+                name="frecuencia_servicio"
+                className="form-control"
+                value={formData.frecuencia_servicio}
+                onChange={handleChange}
+                readOnly={formData.tipo_mantenimiento === "Servicio de Motor"}
+                required
+              />
+            </div>
+
+            {/* Kilometraje próximo servicio */}
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Próximo Servicio (km)</label>
+              <input
+                type="number"
+                className="form-control"
+                value={formData.kilometraje_proximo_servicio || ""}
+                readOnly
+              />
+            </div>
+
+            {/* Costo */}
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Costo</label>
+              <input
+                type="number"
+                step="0.01"
+                name="costo"
+                className="form-control"
+                value={formData.costo}
+                onChange={handleChange}
+              />
+            </div>
+
 
             {/* Taller */}
             <div className="col-md-12 mb-4">

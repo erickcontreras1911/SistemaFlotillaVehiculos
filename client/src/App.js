@@ -15,6 +15,7 @@ import DesasignarVehiculo from "./pages/vehiculos/DesasignarVehiculo";
 import ConsultarVehiculo from "./pages/vehiculos/ConsultarVehiculo";
 import DetalleVehiculo from "./pages/vehiculos/DetalleVehiculo";
 import EditarVehiculo from "./pages/vehiculos/EditarVehiculo";
+import RegistrarKilometraje from "./pages/vehiculos/RegistrarKilometraje";
 
 //POLIZAS
 import AgregarPoliza from "./pages/polizas/AgregarPoliza";
@@ -53,6 +54,8 @@ function App() {
         <Route path="/vehiculos/consultar" element={<ConsultarVehiculo />} />
         <Route path="/vehiculos/detalle/:id" element={<DetalleVehiculo />} />
         <Route path="/vehiculos/modificar/:id" element={<EditarVehiculo />} />
+        <Route path="/vehiculos/kilometraje/:id" element={<RegistrarKilometraje />} />
+
 
         <Route path="/polizas/agregar" element={<AgregarPoliza />} />
         <Route path="/polizas/consultar" element={<ConsultarPoliza />} />
