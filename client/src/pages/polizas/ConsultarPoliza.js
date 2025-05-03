@@ -93,13 +93,13 @@ export default function ConsultarPolizas() {
 
     if (mesesRestantes > 4) return { color: "success", icon: <FaCheckCircle /> };
     if (mesesRestantes >= 2) return { color: "warning", icon: <FaExclamationTriangle /> };
-    return { color: "danger", icon: <FaTimesCircle /> };
+    return { color: "danger", icon: <FaExclamationTriangle /> };
   };
 
   return (
     <SidebarLayout>
       <div className="container">
-        <h2 className="mb-4 text-success">Pólizas Vigentes</h2>
+        <h2 className="mb-4 text-success">Pólizas Vigentes - Holis</h2>
 
         <table className="table table-hover">
           <thead className="table-dark">
