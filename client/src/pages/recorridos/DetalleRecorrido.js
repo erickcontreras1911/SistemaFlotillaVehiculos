@@ -32,6 +32,9 @@ export default function DetalleRecorrido() {
     );
   }
 
+  const horas = recorrido.Tiempo_Aproximado;
+  const aplicaViatico = horas >= 8;
+
   return (
     <SidebarLayout>
       <div className="container">
@@ -87,7 +90,7 @@ export default function DetalleRecorrido() {
             </div>
 
             <div className="col-md-6 mb-3">
-              <label className="form-label">Distancia</label>
+              <label className="form-label">Distancia en Kilómetros</label>
               <input
                 type="text"
                 className="form-control"
@@ -104,6 +107,22 @@ export default function DetalleRecorrido() {
                 value={recorrido.Tiempo_Aproximado}
                 readOnly
               />
+            </div>
+          </div>
+
+          {/* ALERTA DE VIÁTICOS */}
+          <div className="row">
+            <div className="col-12">
+              <div
+                className={`alert ${
+                  aplicaViatico ? "alert-success" : "alert-danger"
+                }`}
+                role="alert"
+              >
+                {aplicaViatico
+                  ? "Sí aplica a viáticos por comida por ser un recorrido mayor a 8 horas"
+                  : "No aplica a viáticos por comida por ser un recorrido menor a 8 horas"}
+              </div>
             </div>
           </div>
         </form>

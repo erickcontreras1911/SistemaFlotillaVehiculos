@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { FaArrowLeft } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 export default function DetalleVehiculo() {
   const { id } = useParams();
@@ -23,14 +24,25 @@ export default function DetalleVehiculo() {
         const res = await fetch(`http://localhost:3001/api/vehiculos/${id}`);
         const data = await res.json();
         setVehiculo(data);
+
+        const anioTarjeta = new Date(data.Impresion_Tarjeta_Circulacion).getFullYear();
+        const anioActual = new Date().getFullYear();
+
+        if (anioTarjeta < anioActual) {
+          Swal.fire({
+            icon: "warning",
+            title: "Impuesto de Circulación Pendiente",
+            text: "Este vehículo no tiene pagado el impuesto de circulación del año actual y tambien debe renovar la tarjeta de circulación-",
+          });
+        }
+
       } catch (error) {
         console.error("Error al obtener vehículo:", error);
       }
     };
-  
+
     obtenerVehiculo();
   }, [id]);
-  
 
   if (!vehiculo) return <SidebarLayout><div className="container">Cargando...</div></SidebarLayout>;
 
@@ -59,6 +71,9 @@ export default function DetalleVehiculo() {
     }
   }
 
+  const anioTarjeta = new Date(vehiculo.Impresion_Tarjeta_Circulacion).getFullYear();
+  const anioActual = new Date().getFullYear();
+  const tarjetaVigente = anioTarjeta === anioActual;
 
   return (
     <SidebarLayout>
@@ -83,17 +98,42 @@ export default function DetalleVehiculo() {
               Combustible: vehiculo.Combustible,
               Transmision: vehiculo.Transmision,
               Estatus: vehiculo.Estatus,
-              Impuesto_Circulacion_Anual: `Q ${parseFloat(vehiculo.Impuesto_Circulacion_Anual || 0).toFixed(2)}`,
-              Impuesto_Anio_Actual: vehiculo.Impuesto_Anio_Actual,
               Kilometraje: vehiculo.Kilometraje,
-              Impresion_Tarjeta_Circulacion: formatearFecha(vehiculo.Impresion_Tarjeta_Circulacion),
-              Piloto_Asignado: vehiculo.Piloto || "Disponible"
+              Piloto_Asignado: vehiculo.Piloto || "Disponible",
+              Impuesto_Circulacion_Anual: `Q ${parseFloat(vehiculo.Impuesto_Circulacion_Anual || 0).toFixed(2)}`
             }).map(([label, value]) => (
               <div className="col-md-3 mb-3" key={label}>
                 <label className="form-label">{label.replace(/_/g, " ")}</label>
                 <input type="text" className="form-control" value={value} readOnly />
               </div>
             ))}
+
+            {/* Tarjeta de circulación con título y color */}
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Impresión Tarjeta Circulación</label>
+              <input
+                type="text"
+                className={`form-control fw-bold ${tarjetaVigente ? "text-success" : "text-danger"}`}
+                value={formatearFecha(vehiculo.Impresion_Tarjeta_Circulacion)}
+                readOnly
+                title={
+                  tarjetaVigente
+                    ? "La tarjeta de circulación está vigente"
+                    : "Debe pagar el impuesto del año actual e imprimir la tarjeta"
+                }
+              />
+            </div>
+
+            {/* Estado del impuesto */}
+            <div className="col-md-3 mb-3">
+              <label className="form-label">Impuesto Año Actual</label>
+              <input
+                type="text"
+                className={`form-control fw-bold ${tarjetaVigente ? "text-success" : "text-danger"}`}
+                value={tarjetaVigente ? "Pagado" : "Pendiente"}
+                readOnly
+              />
+            </div>
           </div>
         </form>
       </div>

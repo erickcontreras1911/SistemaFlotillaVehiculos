@@ -111,9 +111,10 @@ export default function DetalleAgregarRecorrido() {
             </div>
 
             <div className="col-md-6">
-              <label className="form-label">Distancia (km)</label>
+              <label className="form-label">Distancia (Kms.)</label>
               <input
-                type="text"
+                type="number"
+                placeholder="Distancia en Kms Eje. 150 Kms."
                 className="form-control"
                 name="distancia"
                 value={formData.distancia}
@@ -123,10 +124,11 @@ export default function DetalleAgregarRecorrido() {
             </div>
 
             <div className="col-md-6">
-              <label className="form-label">Tiempo Aproximado (min)</label>
+              <label className="form-label">Tiempo Aproximado (Horas)</label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
+                placeholder="Tiempo en horas Ej. 5.5 horas"
                 name="tiempo_aproximado"
                 value={formData.tiempo_aproximado}
                 onChange={handleChange}
