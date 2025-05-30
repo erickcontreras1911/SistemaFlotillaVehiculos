@@ -10,6 +10,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "moment-timezone": "^0.5.48",
     "mysql": "^2.18.1",
     "mysql2": "^3.14.0"

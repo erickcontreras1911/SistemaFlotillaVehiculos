@@ -199,6 +199,67 @@ router.delete("/:id", async (req, res) => {
     }
   });
   
+  const { Parser } = require('json2csv');
+const fs = require('fs');
+const path = require('path');
+
+// GENERAR REPORTE DE PÓLIZAS EN CSV
+router.get('/reporte', async (req, res) => {
+  try {
+    const [rows] = await db.execute(`
+      SELECT 
+        p.ID_Poliza,
+        p.Numero_Poliza,
+        p.Aseguradora,
+        p.Monto,
+        p.Fecha_Emision,
+        p.Fecha_Vencimiento,
+        v.Placa,
+        v.Marca,
+        v.Linea,
+        v.Modelo
+      FROM Polizas p
+      INNER JOIN Vehiculos v ON p.ID_Vehiculo = v.ID_Vehiculo
+      ORDER BY p.Fecha_Vencimiento ASC
+    `);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "No hay pólizas para el reporte" });
+    }
+
+    // Convertir resultados a CSV
+    const fields = [
+      'ID_Poliza', 'Numero_Poliza', 'Aseguradora', 'Monto',
+      'Fecha_Emision', 'Fecha_Vencimiento', 'Placa', 'Marca', 'Linea', 'Modelo'
+    ];
+    const json2csv = new Parser({ fields });
+    const csv = json2csv.parse(rows);
+
+    // Nombre del archivo temporal
+    const fileName = `reporte_polizas_${Date.now()}.csv`;
+    const filePath = path.join(__dirname, '..', 'temp', fileName);
+
+    // Crear carpeta temporal si no existe
+    fs.mkdirSync(path.join(__dirname, '..', 'temp'), { recursive: true });
+
+    // Guardar archivo temporal
+    fs.writeFileSync(filePath, csv);
+
+    // Enviar el archivo como descarga
+    res.download(filePath, fileName, (err) => {
+      if (err) {
+        console.error("Error al descargar el archivo:", err);
+        res.status(500).json({ error: "Error al generar el reporte" });
+      }
+      // Eliminar el archivo después de enviar
+      fs.unlinkSync(filePath);
+    });
+
+  } catch (error) {
+    console.error("Error al generar reporte:", error);
+    res.status(500).json({ error: "Error al generar reporte" });
+  }
+});
   
 
   module.exports = router;
