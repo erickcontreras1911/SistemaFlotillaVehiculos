@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
-//import Swal from "sweetalert2";
-import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // Import con variable
+import { FaCheckCircle, FaExclamationTriangle, FaEye, FaEdit, FaTrash, FaFilePdf } from "react-icons/fa";
 
 export default function ConsultarPolizas() {
-  const [polizasVigentes, setPolizasVigentes] = useState([]);
-  const [polizasVencidas, setPolizasVencidas] = useState([]);
-    
+  const [polizas, setPolizas] = useState([]);
+  const [filtro, setFiltro] = useState("");
   const [vehiculosSinPoliza, setVehiculosSinPoliza] = useState([]);
   const navigate = useNavigate();
 
@@ -22,57 +21,11 @@ export default function ConsultarPolizas() {
     try {
       const res = await fetch("http://localhost:3001/api/polizas");
       const data = await res.json();
-  
-      const hoy = new Date();
-  
-      const vigentes = data.filter((p) => new Date(p.Fecha_Vencimiento) >= hoy);
-      const vencidas = data.filter((p) => new Date(p.Fecha_Vencimiento) < hoy);
-  
-      setPolizasVigentes(vigentes);
-      setPolizasVencidas(vencidas);
+      setPolizas(data);
     } catch (error) {
       console.error("Error al cargar pólizas:", error);
     }
   };
-  
-  const eliminarPoliza = async (poliza) => {
-    const hoy = new Date();
-    const vencimiento = new Date(poliza.Fecha_Vencimiento);
-  
-    let mensajeConfirmacion = "¿Está seguro que desea eliminar esta póliza?";
-    if (vencimiento >= hoy) {
-      mensajeConfirmacion = "La póliza aún está vigente. ¿Está seguro que desea eliminarla?";
-    }
-  
-    const confirmacion = await Swal.fire({
-      title: "Eliminar Póliza",
-      text: mensajeConfirmacion,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
-    });
-  
-    if (confirmacion.isConfirmed) {
-      try {
-        const res = await fetch(`http://localhost:3001/api/polizas/${poliza.ID_Poliza}`, {
-          method: "DELETE"
-        });
-  
-        if (res.ok) {
-          Swal.fire("Eliminada", "La póliza fue eliminada exitosamente", "success");
-          obtenerPolizas(); // Refrescar la lista
-          obtenerVehiculosSinPoliza(); // Refrescar disponibles
-        } else {
-          Swal.fire("Error", "No se pudo eliminar la póliza", "error");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        Swal.fire("Error", "Error al eliminar la póliza", "error");
-      }
-    }
-  };
-  
 
   const obtenerVehiculosSinPoliza = async () => {
     try {
@@ -84,28 +37,128 @@ export default function ConsultarPolizas() {
     }
   };
 
+  const eliminarPoliza = async (poliza) => {
+    const hoy = new Date();
+    const vencimiento = new Date(poliza.Fecha_Vencimiento);
+    let mensajeConfirmacion = "¿Está seguro que desea eliminar esta póliza?";
+    if (vencimiento >= hoy) {
+      mensajeConfirmacion = "La póliza aún está vigente. ¿Está seguro que desea eliminarla?";
+    }
+
+    const confirmacion = await Swal.fire({
+      title: "Eliminar Póliza",
+      text: mensajeConfirmacion,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        const res = await fetch(`http://localhost:3001/api/polizas/${poliza.ID_Poliza}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire("Eliminada", "La póliza fue eliminada exitosamente", "success");
+          obtenerPolizas();
+          obtenerVehiculosSinPoliza();
+        } else {
+          Swal.fire("Error", "No se pudo eliminar la póliza", "error");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        Swal.fire("Error", "Error al eliminar la póliza", "error");
+      }
+    }
+  };
+
   const calcularColor = (fechaVencimiento) => {
     if (!fechaVencimiento) return { color: "secondary", icon: null };
-
     const hoy = new Date();
     const vencimiento = new Date(fechaVencimiento);
     const mesesRestantes = (vencimiento.getFullYear() - hoy.getFullYear()) * 12 + vencimiento.getMonth() - hoy.getMonth();
-
     if (mesesRestantes > 4) return { color: "success", icon: <FaCheckCircle /> };
     if (mesesRestantes >= 2) return { color: "warning", icon: <FaExclamationTriangle /> };
     return { color: "danger", icon: <FaExclamationTriangle /> };
   };
 
+  // 🔎 Filtrado
+  const polizasFiltradas = polizas.filter((p) =>
+    p.Numero_Poliza.toLowerCase().includes(filtro.toLowerCase()) ||
+    p.Placa.toLowerCase().includes(filtro.toLowerCase()) ||
+    p.Aseguradora.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  // 📄 Generar PDF
+const generarPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Reporte de Pólizas", 105, 20, null, null, "center");
+
+  const fechaActual = new Date().toLocaleDateString();
+  doc.setFontSize(10);
+  doc.text(`Fecha de generación: ${fechaActual}`, 14, 30);
+
+  const columnas = [
+    { header: "ID", dataKey: "id" },
+    { header: "Número", dataKey: "numero" },
+    { header: "Placa", dataKey: "placa" },
+    { header: "Aseguradora", dataKey: "aseguradora" },
+    { header: "Vencimiento", dataKey: "vencimiento" },
+  ];
+  const filas = polizasFiltradas.map(p => ({
+    id: p.ID_Poliza,
+    numero: p.Numero_Poliza,
+    placa: p.Placa,
+    aseguradora: p.Aseguradora,
+    vencimiento: new Date(p.Fecha_Vencimiento).toLocaleDateString(),
+  }));
+
+  doc.autoTable({
+    startY: 40,
+    columns: columnas,
+    body: filas,
+    theme: "grid",
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [0, 123, 255] },
+  });
+
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.text(`Página ${i} de ${pageCount}`, 105, 290, null, null, "center");
+  }
+
+  doc.save("reporte_polizas.pdf");
+};
+
   return (
     <SidebarLayout>
       <div className="container">
-        <h2 className="mb-4 text-success">Pólizas Vigentes</h2>
+        <h2 className="mb-4 text-success">Pólizas</h2>
+
+        {/* 🔍 Filtro */}
+        <div className="mb-3">
+          <input
+            type="text"
+            placeholder="Filtrar por número, placa o aseguradora"
+            className="form-control"
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          />
+        </div>
+
+        {/* 📄 Botón Generar PDF */}
+        <button className="btn btn-danger mb-3" onClick={generarPDF}>
+          <FaFilePdf className="me-2" /> Generar Reporte PDF
+        </button>
 
         <table className="table table-hover">
           <thead className="table-dark">
             <tr>
               <th>ID</th>
-              <th>Número de Póliza</th>
+              <th>Número</th>
               <th>Vehículo</th>
               <th>Aseguradora</th>
               <th>Vencimiento</th>
@@ -113,7 +166,7 @@ export default function ConsultarPolizas() {
             </tr>
           </thead>
           <tbody>
-            {polizasVigentes.map((p) => {
+            {polizasFiltradas.map((p) => {
               const { color, icon } = calcularColor(p.Fecha_Vencimiento);
               return (
                 <tr key={p.ID_Poliza}>
@@ -126,22 +179,14 @@ export default function ConsultarPolizas() {
                   </td>
                   <td>
                     <div className="d-flex gap-2">
-                    <button
-                        className="btn btn-primary btn-sm flex-fill"
-                        onClick={() => navigate(`/polizas/detalle/${p.ID_Poliza}`)}
-                        >
-                        <FaEye className="me-1" /> Ver más
-                    </button>
-                      <button className="btn btn-success btn-sm flex-fill" 
-                      onClick={() => navigate(`/polizas/modificar/${p.ID_Poliza}`)}
-                      >
-                        <FaEdit className="me-1" /> Editar
+                      <button className="btn btn-primary btn-sm" onClick={() => navigate(`/polizas/detalle/${p.ID_Poliza}`)}>
+                        <FaEye /> Ver
                       </button>
-                      <button
-                        className="btn btn-danger btn-sm flex-fill"
-                        onClick={() => eliminarPoliza(p)}
-                        >
-                        <FaTrash className="me-1" /> Eliminar
+                      <button className="btn btn-success btn-sm" onClick={() => navigate(`/polizas/modificar/${p.ID_Poliza}`)}>
+                        <FaEdit /> Editar
+                      </button>
+                      <button className="btn btn-danger btn-sm" onClick={() => eliminarPoliza(p)}>
+                        <FaTrash /> Eliminar
                       </button>
                     </div>
                   </td>
@@ -150,63 +195,6 @@ export default function ConsultarPolizas() {
             })}
           </tbody>
         </table>
-
-
-        {polizasVencidas.length > 0 && (
-        <>
-            <h2 className="mt-5 text-danger">Pólizas Vencidas</h2>
-            <table className="table table-hover">
-            <thead className="table-dark">
-                <tr>
-                <th>ID</th>
-                <th>Número de Póliza</th>
-                <th>Vehículo</th>
-                <th>Aseguradora</th>
-                <th>Vencimiento</th>
-                <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {polizasVencidas.map((p) => (
-                <tr key={p.ID_Poliza} className="table-danger">
-                    <td>{p.ID_Poliza}</td>
-                    <td>{p.Numero_Poliza}</td>
-                    <td>{`${p.Placa} - ${p.Marca} ${p.Linea} ${p.Modelo}`}</td>
-                    <td>{p.Aseguradora}</td>
-                    <td className="text-danger fw-bold">
-                    {new Date(p.Fecha_Vencimiento).toLocaleDateString()}
-                    <FaTimesCircle className="ms-2" />
-                    </td>
-                    <td>
-                    <div className="d-flex gap-2">
-                        <button
-                            className="btn btn-primary btn-sm flex-fill"
-                            onClick={() => navigate(`/polizas/detalle/${p.ID_Poliza}`)}
-                            >
-                            <FaEye className="me-1" /> Ver más
-                        </button>
-                        <button 
-                            className="btn btn-success btn-sm flex-fill"
-                            onClick={() => navigate(`/polizas/modificar/${p.ID_Poliza}`)}
-                            >
-                            <FaEdit className="me-1" /> Editar
-                        </button>
-                        <button
-                            className="btn btn-danger btn-sm flex-fill"
-                            onClick={() => eliminarPoliza(p)}
-                            >
-                            <FaTrash className="me-1" /> Eliminar
-                        </button>
-
-                    </div>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
-        </>
-        )}
-
 
         {vehiculosSinPoliza.length > 0 && (
           <>
@@ -225,7 +213,7 @@ export default function ConsultarPolizas() {
               </thead>
               <tbody>
                 {vehiculosSinPoliza.map((v) => (
-                  <tr key={v.ID_Vehiculo}  className="table-warning">
+                  <tr key={v.ID_Vehiculo} className="table-warning">
                     <td>{v.ID_Vehiculo}</td>
                     <td>{v.Placa}</td>
                     <td>{v.Tipos}</td>
