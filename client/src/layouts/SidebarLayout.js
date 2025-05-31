@@ -43,6 +43,7 @@ const menuItems = [
     subItems: [
       { name: "Agregar Recorrido", path: "/recorridos/agregar" },
       { name: "Consultar Recorrido", path: "/recorridos/consultar" },
+      { name: "Reportería de Recorridos", path: "/recorridos/reporteria" },
     ],
   },
   {

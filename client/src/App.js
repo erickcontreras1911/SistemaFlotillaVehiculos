@@ -29,6 +29,7 @@ import DetalleAgregarRecorrido from "./pages/recorridos/DetalleAgregarRecorrido"
 import ConsultarRecorrido from "./pages/recorridos/ConsultarRecorrido";
 import DetalleRecorrido from "./pages/recorridos/DetalleRecorrido";
 import EditarRecorrido from "./pages/recorridos/EditarRecorrido";
+import ReporteriaRecorridos from "./pages/recorridos/ReporteriaRecorridos";
 
 //MANTENIMIENTOS
 import AgregarMantenimiento from "./pages/mantenimientos/AgregarMantenimiento";
@@ -67,6 +68,7 @@ function App() {
         <Route path="/recorridos/consultar" element={<ConsultarRecorrido />} />
         <Route path="/recorridos/detallar/:id" element={<DetalleRecorrido />} />
         <Route path="/recorridos/modificar/:id" element={<EditarRecorrido />} />
+        <Route path="/recorridos/reporteria" element={<ReporteriaRecorridos />} />
 
         <Route path="/mantenimientos/agregar" element={<AgregarMantenimiento />} />
         <Route path="/mantenimientos/consultar" element={<ConsultarMantenimiento />} />
