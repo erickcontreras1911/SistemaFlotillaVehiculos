@@ -4,6 +4,7 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
+const BACKEND_URL = "http://localhost:3001";
 
 export default function ConsultarEmpleado() {
   const [empleados, setEmpleados] = useState([]);
@@ -13,7 +14,7 @@ export default function ConsultarEmpleado() {
 
   const obtenerEmpleados = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/empleados");
+      const res = await fetch(`${BACKEND_URL}/api/empleados`);
       const data = await res.json();
       setEmpleados(data);
     } catch (error) {
@@ -37,7 +38,7 @@ export default function ConsultarEmpleado() {
   
     if (confirmacion.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:3001/api/empleados/${empleado.ID_Empleado}`, {
+        const res = await fetch(`${BACKEND_URL}/api/empleados/${empleado.ID_Empleado}`, {
           method: "DELETE",
         });
   
@@ -45,7 +46,7 @@ export default function ConsultarEmpleado() {
           Swal.fire("Eliminado", "El empleado fue eliminado", "success");
           obtenerEmpleados(); // recarga la lista
         } else {
-          Swal.fire("Error", "No se pudo eliminar el empleado", "error");
+          Swal.fire("Error", "No se puede eliminar el empleado, por que tiene el rol Piloto y tiene un vehiculo asignado", "error");
         }
       } catch (error) {
         Swal.fire("Error", "Error de red o servidor", "error");

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { FaArrowLeft } from "react-icons/fa";
+const BACKEND_URL = "http://localhost:3001";
+
 
 export default function DetalleEmpleado() {
   const { id } = useParams();
@@ -10,7 +12,7 @@ export default function DetalleEmpleado() {
 
   const obtenerEmpleado = async () => {
     try {
-      const res = await fetch(`http://localhost:3001/api/empleados/${id}`);
+      const res = await fetch(`${BACKEND_URL}/api/empleados/${id}`);
       const data = await res.json();
       setEmpleado(data);
     } catch (error) {

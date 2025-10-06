@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-//INSERTAR UN NUEVO EMPLEADO
+// INSERTAR UN NUEVO EMPLEADO
 router.post("/agregar", async (req, res) => {
   try {
-    const {
+    let {
       nombres,
       apellidos,
       dpi,
@@ -18,6 +18,13 @@ router.post("/agregar", async (req, res) => {
       id_rol,
     } = req.body;
 
+    // Normalizaciones mínimas seguras:
+    telefono = telefono ?? "";                // evita NULL si columna es NOT NULL
+    direccion = direccion ?? "";
+    email = email ?? "";
+    salario = salario === "" || salario == null ? 0 : parseFloat(salario); // o un default válido
+    id_rol = parseInt(id_rol, 10);            // asegura número
+
     const [result] = await db.execute(
       `INSERT INTO Empleados 
       (Nombres, Apellidos, DPI, Telefono, Direccion, Email, Fecha_Nacimiento, Fecha_Contratacion, Salario, ID_Rol) 
@@ -26,22 +33,27 @@ router.post("/agregar", async (req, res) => {
         nombres,
         apellidos,
         dpi,
-        telefono || null,
-        direccion || null,
-        email || null,
-        fecha_nacimiento || null,
-        fecha_contratacion || null,
-        salario || null,
+        telefono,
+        direccion,
+        email,
+        fecha_nacimiento,       // "YYYY-MM-DD" funciona para DATE
+        fecha_contratacion,     // idem
+        salario,
         id_rol,
       ]
     );
 
     res.status(201).json({ message: "Empleado agregado correctamente", id: result.insertId });
   } catch (error) {
-    console.error(error);
+    console.error("Error al agregar empleado:", error);
+    // Ayuda a detectar FK rota del rol
+    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+      return res.status(400).json({ error: "ID_Rol inválido (no existe en la tabla de roles)" });
+    }
     res.status(500).json({ error: "Error al agregar el empleado" });
   }
 });
+
 
 //CONSULTA DE EMPLEADO
 router.get("/", async (req, res) => {
