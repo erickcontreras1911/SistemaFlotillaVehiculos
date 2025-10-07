@@ -4,7 +4,7 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
-const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com/";
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com";
 
 export default function ConsultarEmpleado() {
   const [empleados, setEmpleados] = useState([]);
