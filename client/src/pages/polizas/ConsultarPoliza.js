@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 
 // Constante por vista para endpoints
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 // Utilidades de fecha
 const startOfDay = (d) => {

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com";
 
 export default function DetallePoliza() {
   const { id } = useParams();

@@ -4,7 +4,7 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 
 // Constante por vista para endpoints
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 export default function DetalleAgregarRecorrido() {
   const { idAsignacion } = useParams();

@@ -3,7 +3,7 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com";
 
 
 export default function AgregarEmpleado() {

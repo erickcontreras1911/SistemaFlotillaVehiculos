@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
 // Constante por vista para endpoints
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 export default function ConsultarRecorrido() {
   const [recorridos, setRecorridos] = useState([]);

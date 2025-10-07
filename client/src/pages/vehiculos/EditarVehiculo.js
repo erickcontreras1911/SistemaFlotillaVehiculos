@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 
-const BACKEND_URL = "http://localhost:3001"; // tu constante simple por vista
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com"; // tu constante simple por vista
 
 // ===== Helpers de placa, asientos y validaciones =====
 const getPrefixByTipo = (tipo) => {

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 // Constante por vista para endpoints
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 export default function ConsultarMantenimiento() {
   const [mantenimientos, setMantenimientos] = useState([]);

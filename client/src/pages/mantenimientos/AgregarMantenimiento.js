@@ -5,7 +5,7 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 
 // Constante por vista para endpoints
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 // Helpers de fecha
 const startOfDay = (d) => {

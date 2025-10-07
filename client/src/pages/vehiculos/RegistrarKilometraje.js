@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import SidebarLayout from "../../layouts/SidebarLayout";
 
 // Constante por vista
-const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+const BACKEND_URL = "https://sistemaflotillavehiculos.onrender.com".replace(/\/$/, "");
 
 export default function RegistrarKilometraje() {
   const { id } = useParams();
