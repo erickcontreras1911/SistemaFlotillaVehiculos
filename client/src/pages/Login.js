@@ -46,7 +46,8 @@ export default function Login() {
     <div className="login-wrap">
       <div className="login-card">
         <div className="brand">
-          <div className="logo">SF</div>
+          {/* Logo desde client/public/logo512.png */}
+          <img src="/logo.png" alt="Logo" className="logo" />
           <div className="brand-text">
             <h1>Sistema de Flotillas</h1>
             <p className="subtitle">Acceso</p>
@@ -141,15 +142,15 @@ export default function Login() {
           gap: 14px;
           margin-bottom: 18px;
         }
+        /* Logo como imagen */
         .logo {
-          width: 52px; height: 52px;
-          display: grid; place-items: center;
+          width: 52px;
+          height: 52px;
           border-radius: 14px;
-          background: linear-gradient(145deg, #22c55e, #16a34a);
-          color: white;
-          font-weight: 800;
-          letter-spacing: .5px;
-          box-shadow: 0 6px 16px rgba(34,197,94,.45);
+          box-shadow: 0 6px 16px rgba(34,197,94,.35);
+          object-fit: cover;
+          object-position: center;
+          display: block;
         }
         .brand-text h1 {
           margin: 0;

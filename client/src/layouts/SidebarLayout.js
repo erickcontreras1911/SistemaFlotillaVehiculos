@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaChevronDown,
@@ -73,6 +73,12 @@ export default function SidebarLayout({ children }) {
     navigate("/", { replace: true });
   };
 
+  useEffect(() => {
+    if (sessionStorage.getItem("auth_ok") !== "1") {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="d-flex" style={{ minHeight: "100vh" }}>
       <aside
@@ -92,8 +98,8 @@ export default function SidebarLayout({ children }) {
           </Link>
         </div>
 
-        {/* Navegación (ocupa el espacio disponible) */}
-        <nav style={{ flexGrow: 1 }}>
+        {/* Navegación (botón de cerrar sesión va al final de esta sección) */}
+        <nav>
           {menuItems.map((item) => (
             <div key={item.title} className="mb-2">
               <button
@@ -118,18 +124,16 @@ export default function SidebarLayout({ children }) {
               )}
             </div>
           ))}
-        </nav>
 
-        {/* Cerrar sesión (pegado abajo) */}
-        <div className="mt-3 pt-3 border-top border-secondary">
+          {/* Cerrar sesión (ahora inmediatamente después del último grupo) */}
           <button
-            className="btn btn-danger w-100 d-flex align-items-center justify-content-center"
+            className="btn btn-danger w-100 mt-3 d-flex align-items-center justify-content-center"
             onClick={handleLogout}
           >
             <FaSignOutAlt className="me-2" />
             Cerrar Sesión
           </button>
-        </div>
+        </nav>
       </aside>
 
       <main className="flex-grow-1 p-4 bg-light">{children}</main>
