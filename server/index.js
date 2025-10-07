@@ -1,41 +1,47 @@
 // server/index.js
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// RUTA PARA EMPLEADOS
-const empleadosRoutes = require("./routes/empleados");
-app.use("/api/empleados", empleadosRoutes);
+// ================== Rutas de API (igual que las tenías) ==================
+app.use("/api/empleados", require("./routes/empleados"));
+app.use("/api/vehiculos", require("./routes/vehiculos"));
+app.use("/api/asignacion", require("./routes/asignacion"));
+app.use("/api/polizas", require("./routes/polizas"));
+app.use("/api/recorridos", require("./routes/recorridos"));
+app.use("/api/mantenimientos", require("./routes/mantenimientos"));
+app.use("/api/talleres", require("./routes/talleres"));
 
-//RUTA PARA VEHÍCULOS
-const vehiculosRoutes = require("./routes/vehiculos");
-app.use("/api/vehiculos", vehiculosRoutes);
+// Healthcheck simple
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, env: process.env.NODE_ENV || "development", time: new Date().toISOString() });
+});
 
-//RUTA PARA ASIGNACIÓN DE VEHÍCULOS
-const asignacionRoutes = require("./routes/asignacion");
-app.use("/api/asignacion", asignacionRoutes);
+// ================== Servir React build (Vite o CRA) ==================
+const distPath = path.resolve(__dirname, "..", "client", "dist");   // Vite
+const buildPath = path.resolve(__dirname, "..", "client", "build"); // CRA
+const staticDir = fs.existsSync(distPath) ? distPath : buildPath;
 
-//RUTA PARA POLIZAS
-const polizasRoutes = require("./routes/polizas");
-app.use("/api/polizas", polizasRoutes);
+if (fs.existsSync(staticDir)) {
+  // Sirve archivos estáticos del frontend
+  app.use(express.static(staticDir));
 
-//RUTA PARA RECORRIDOS
-const recorridosRoutes = require("./routes/recorridos");
-app.use("/api/recorridos", recorridosRoutes);
-
-//RUTA PARA MANTENIMIENTOS
-const mantenimientosRoutes = require("./routes/mantenimientos");
-app.use("/api/mantenimientos", mantenimientosRoutes);
-
-//RUTA PARA TALLERES
-const talleresRoutes = require("./routes/talleres");
-app.use("/api/talleres", talleresRoutes);
-
+  // Fallback para rutas del SPA (debe ir al final y después de las rutas /api)
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(staticDir, "index.html"));
+  });
+} else {
+  console.warn("⚠️ No se encontró carpeta de build del frontend (dist o build).");
+  console.warn("   Ejecuta `npm run build` dentro de /client para generar el build.");
+}
 
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);

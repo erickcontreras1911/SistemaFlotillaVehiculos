@@ -11,3 +11,18 @@ build/
 
 # Ignorar otros archivos temporales
 .DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Builds frontend
+client/dist/
+client/build/
+
+# Misc
+.DS_Store
+.env
+.env.*
