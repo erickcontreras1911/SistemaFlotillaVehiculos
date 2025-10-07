@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { FaArrowLeft } from "react-icons/fa";
 import Swal from "sweetalert2";
+const BACKEND_URL = "http://localhost:3001";
 
 export default function DetalleVehiculo() {
   const { id } = useParams();
@@ -21,7 +22,7 @@ export default function DetalleVehiculo() {
   useEffect(() => {
     const obtenerVehiculo = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/vehiculos/${id}`);
+        const res = await fetch(`${BACKEND_URL}/api/vehiculos/${id}`);
         const data = await res.json();
         setVehiculo(data);
 

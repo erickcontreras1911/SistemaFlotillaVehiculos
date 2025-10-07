@@ -3,6 +3,7 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEdit, FaTrash, FaCar } from "react-icons/fa";
+const BACKEND_URL = "http://localhost:3001";
 
 
 export default function ConsultarVehiculo() {
@@ -14,7 +15,7 @@ export default function ConsultarVehiculo() {
 
   const obtenerVehiculos = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/vehiculos");
+      const res = await fetch(`${BACKEND_URL}/api/vehiculos`);
       const data = await res.json();
       setVehiculos(data);
     } catch (error) {
@@ -51,8 +52,8 @@ export default function ConsultarVehiculo() {
   
     if (confirmacion.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:3001/api/vehiculos/${vehiculo.ID_Vehiculo}`, {
-          method: "DELETE"
+        const res = await fetch(`${BACKEND_URL}/api/vehiculos/${vehiculo.ID_Vehiculo}`, {
+          method: "DELETE" 
         });
   
         if (res.ok) {

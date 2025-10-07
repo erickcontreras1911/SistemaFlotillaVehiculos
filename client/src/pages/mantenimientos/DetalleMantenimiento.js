@@ -4,6 +4,9 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 import { FaArrowLeft } from "react-icons/fa";
 
+// Constante por vista para endpoints
+const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+
 export default function DetalleMantenimiento() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +15,7 @@ export default function DetalleMantenimiento() {
   useEffect(() => {
     const obtenerMantenimiento = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/mantenimientos/${id}`);
+        const res = await fetch(`${BACKEND_URL}/api/mantenimientos/${id}`);
         const data = await res.json();
         setMantenimiento(data);
       } catch (error) {
@@ -59,14 +62,22 @@ export default function DetalleMantenimiento() {
 
             <div className="col-md-3 mb-3">
               <label className="form-label">Fecha</label>
-              <input type="date" className="form-control" value={mantenimiento.Fecha.split("T")[0]} readOnly />
+              <input
+                type="date"
+                className="form-control"
+                value={mantenimiento.Fecha.split("T")[0]}
+                readOnly
+              />
             </div>
-
-            
 
             <div className="col-8 mb-3">
               <label className="form-label">Título del Mantenimiento</label>
-              <input type="text" className="form-control" value={mantenimiento.Titulo_Mantenimiento} readOnly />
+              <input
+                type="text"
+                className="form-control"
+                value={mantenimiento.Titulo_Mantenimiento}
+                readOnly
+              />
             </div>
 
             <div className="col-4 mb-3">
@@ -83,6 +94,7 @@ export default function DetalleMantenimiento() {
               <label className="form-label">Kilometraje</label>
               <input type="text" className="form-control" value={mantenimiento.Kilometraje || ""} readOnly />
             </div>
+
             <div className="col-md-3 mb-3">
               <label className="form-label">Frecuencia Servicio (km)</label>
               <input
@@ -103,13 +115,10 @@ export default function DetalleMantenimiento() {
               />
             </div>
 
-
             <div className="col-md-3 mb-3">
               <label className="form-label">Costo</label>
               <input type="text" className="form-control" value={mantenimiento.Costo} readOnly />
             </div>
-
-
           </div>
         </form>
       </div>

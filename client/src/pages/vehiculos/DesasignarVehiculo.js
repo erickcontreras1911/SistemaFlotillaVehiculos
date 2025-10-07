@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
+const BACKEND_URL = "http://localhost:3001";
 
 export default function DesasignarVehiculo() {
   const [asignaciones, setAsignaciones] = useState([]);
 
   const obtenerAsignaciones = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/api/asignacion/asignados");
+    try {  
+      const res = await fetch(`${BACKEND_URL}/api/asignacion/asignados`);
       const data = await res.json();
       setAsignaciones(data);
     } catch (error) {
@@ -32,8 +33,8 @@ export default function DesasignarVehiculo() {
 
     if (confirmacion.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:3001/api/asignacion/${asignacion.ID_Asignacion}`, {
-          method: "DELETE"
+        const res = await fetch(`${BACKEND_URL}/api/asignacion/${asignacion.ID_Asignacion}`, {
+          method: "DELETE" 
         });
 
         if (res.ok) {

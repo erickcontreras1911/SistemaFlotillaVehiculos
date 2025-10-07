@@ -16,7 +16,7 @@ const getPrefixByTipo = (tipo) => {
 const getAsientosByTipo = (tipo) => {
   switch (tipo) {
     case "Motocicleta": return 2;
-    case "Sedan": return 4;
+    case "Sedan": return 5;
     case "Camion": return 3;
     case "Panel": return 3;
     case "Pickup": return 5;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
+const BACKEND_URL = "http://localhost:3001";
 
 export default function AsignarVehiculo() {
   const [pilotos, setPilotos] = useState([]);
@@ -13,7 +14,7 @@ export default function AsignarVehiculo() {
 
   const obtenerDisponibles = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/asignacion/disponibles");
+      const res = await fetch(`${BACKEND_URL}/api/asignacion/disponibles`);
       const data = await res.json();
   
       setPilotos(data.pilotos);
@@ -46,7 +47,7 @@ export default function AsignarVehiculo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/asignacion", {
+      const res = await fetch(`${BACKEND_URL}/api/asignacion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

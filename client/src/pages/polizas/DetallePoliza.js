@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SidebarLayout from "../../layouts/SidebarLayout";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
-
+const BACKEND_URL = "http://localhost:3001";
 
 export default function DetallePoliza() {
   const { id } = useParams();
@@ -12,8 +12,8 @@ export default function DetallePoliza() {
 
   useEffect(() => {
     const obtenerPoliza = async () => {
-      try {
-        const res = await fetch(`http://localhost:3001/api/polizas/${id}`);
+      try { 
+        const res = await fetch(`${BACKEND_URL}/api/polizas/${id}`);
         const data = await res.json();
         setPoliza(data);
       } catch (error) {

@@ -4,6 +4,9 @@ import SidebarLayout from "../../layouts/SidebarLayout";
 import Swal from "sweetalert2";
 import { FaArrowLeft } from "react-icons/fa";
 
+// Constante por vista para endpoints
+const BACKEND_URL = "http://localhost:3001".replace(/\/$/, "");
+
 export default function DetalleRecorrido() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +15,7 @@ export default function DetalleRecorrido() {
   useEffect(() => {
     const obtenerRecorrido = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/recorridos/${id}`);
+        const res = await fetch(`${BACKEND_URL}/api/recorridos/${id}`);
         const data = await res.json();
         setRecorrido(data);
       } catch (error) {

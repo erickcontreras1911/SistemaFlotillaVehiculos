@@ -150,72 +150,99 @@ router.get("/:id", async (req, res) => {
 
 // EDITAR VEHÍCULOS
 router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    Placa,
-    Tipos,
-    Marca,
-    Modelo,
-    Linea,
-    Chasis,
-    Color,
-    Asientos,
-    Motor,
-    Combustible,
-    Transmision,
-    Estatus,
-    Impuesto_Circulacion_Anual,
-    Impuesto_Anio_Actual,
-    Kilometraje,
-    Impresion_Tarjeta_Circulacion
-  } = req.body;
-
   try {
-    const [result] = await db.execute(`
-      UPDATE Vehiculos SET
-        Placa = ?,
-        Tipos = ?,
-        Marca = ?,
-        Modelo = ?,
-        Linea = ?,
-        Chasis = ?,
-        Color = ?,
-        Asientos = ?,
-        Motor = ?,
-        Combustible = ?,
-        Transmision = ?,
-        Estatus = ?,
-        Impuesto_Circulacion_Anual = ?,
-        Impuesto_Anio_Actual = ?,
-        Kilometraje = ?,
-        Impresion_Tarjeta_Circulacion = ?
-      WHERE ID_Vehiculo = ?
-    `, [
-      Placa,
-      Tipos,
-      Marca,
-      Modelo,
-      Linea,
-      Chasis,
-      Color,
-      Asientos,
-      Motor,
-      Combustible,
-      Transmision,
-      Estatus,
-      Impuesto_Circulacion_Anual,
-      Impuesto_Anio_Actual,
-      Kilometraje,
-      Impresion_Tarjeta_Circulacion,
-      id
-    ]);
+    // 1) Validar/normalizar ID
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
 
-    res.json({ message: "Vehículo actualizado correctamente" });
+    // 2) Helpers para normalizar valores
+    const NN = (v) => (v === undefined ? null : v);                     // string/fecha
+    const NN_INT = (v) => (v === undefined || v === "" ? null : parseInt(v, 10));
+    const NN_NUM = (v) => (v === undefined || v === "" ? null : Number(v));
+
+    // 3) Tomar campos del body aceptando minúsculas/mayúsculas
+    //    (el frontend que hicimos envía en minúscula con guiones bajos)
+    let placa  = req.body.Placa  ?? req.body.placa;
+    let tipos  = req.body.Tipos  ?? req.body.tipos;
+    let marca  = req.body.Marca  ?? req.body.marca;
+    let modelo = req.body.Modelo ?? req.body.modelo;
+    let linea  = req.body.Linea  ?? req.body.linea;
+    let chasis = req.body.Chasis ?? req.body.chasis;
+    let color  = req.body.Color  ?? req.body.color;
+
+    let asientos = req.body.Asientos ?? req.body.asientos;
+    let motor    = req.body.Motor    ?? req.body.motor;
+
+    let combustible = req.body.Combustible ?? req.body.combustible;
+    let transmision = req.body.Transmision ?? req.body.transmision;
+
+    // Estatus puede no venir desde la vista; si tu columna es NOT NULL, dejamos "Activo" por defecto
+    let estatus = req.body.Estatus ?? req.body.estatus ?? "Activo";
+
+    let impuesto_circulacion_anual = req.body.Impuesto_Circulacion_Anual ?? req.body.impuesto_circulacion_anual;
+    let impuesto_anio_actual       = req.body.Impuesto_Anio_Actual       ?? req.body.impuesto_anio_actual;
+
+    let kilometraje = req.body.Kilometraje ?? req.body.kilometraje;
+    let impresion_tarjeta_circulacion =
+      req.body.Impresion_Tarjeta_Circulacion ?? req.body.impresion_tarjeta_circulacion;
+
+    // 4) Normalizaciones finales (evitar undefined, castear tipos, sanear strings)
+    placa  = NN((placa || "").toString().toUpperCase().trim());
+    tipos  = NN((tipos || "").toString().trim());
+    marca  = NN((marca || "").toString().trim());
+    modelo = NN_INT(modelo);
+    linea  = NN((linea || "").toString().trim());
+    chasis = NN((chasis || "").toString().toUpperCase().slice(0, 20));
+    color  = NN((color || "").toString().trim());
+
+    asientos = NN_INT(asientos);
+    motor    = NN_INT(motor);
+
+    combustible = NN((combustible || "").toString().trim());
+    transmision = NN((transmision || "").toString().trim());
+    estatus     = NN((estatus || "").toString().trim() || "Activo");
+
+    impuesto_circulacion_anual = NN_NUM(impuesto_circulacion_anual);
+    // "Pagado"/"Pendiente" o null
+    impuesto_anio_actual = NN((impuesto_anio_actual || "").toString().trim() || null);
+
+    kilometraje = NN_INT(kilometraje);
+
+    // Acepta "YYYY-MM-DD" o null
+    impresion_tarjeta_circulacion = NN(
+      (impresion_tarjeta_circulacion || "").toString().trim() || null
+    );
+
+    // 5) Ejecutar UPDATE (sin undefined en los parámetros)
+    const [result] = await db.execute(
+      `UPDATE Vehiculos SET
+         Placa = ?, Tipos = ?, Marca = ?, Modelo = ?, Linea = ?, Chasis = ?, Color = ?,
+         Asientos = ?, Motor = ?, Combustible = ?, Transmision = ?, Estatus = ?,
+         Impuesto_Circulacion_Anual = ?, Impuesto_Anio_Actual = ?,
+         Kilometraje = ?, Impresion_Tarjeta_Circulacion = ?
+       WHERE ID_Vehiculo = ?`,
+      [
+        placa, tipos, marca, modelo, linea, chasis, color,
+        asientos, motor, combustible, transmision, estatus,
+        impuesto_circulacion_anual, impuesto_anio_actual,
+        kilometraje, impresion_tarjeta_circulacion,
+        id
+      ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Vehículo no encontrado" });
+    }
+
+    return res.json({ message: "Vehículo actualizado correctamente" });
   } catch (error) {
     console.error("Error al actualizar vehículo:", error);
-    res.status(500).json({ error: "Error al actualizar vehículo" });
+    return res.status(500).json({ error: "Error al actualizar vehículo" });
   }
 });
+
 
 
 //ELIMINAR VEHÍCULOS

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 
 //ESTAS SON LAS IMPORTACIONES PARA LAS RUTAS NECESARIAS
 //EMPLEADOS
@@ -37,13 +38,15 @@ import ConsultarMantenimiento from "./pages/mantenimientos/ConsultarMantenimient
 import DetalleMantenimiento from "./pages/mantenimientos/DetalleMantenimiento";
 import EditarMantenimiento from "./pages/mantenimientos/EditarMantenimiento";
 
+
+
 import "./App.css";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
         <Route path="/empleados/agregar" element={<AgregarEmpleado />} />
         <Route path="/empleados/consultar" element={<ConsultarEmpleado />} />
         <Route path="/empleados/detalle/:id" element={<DetalleEmpleado />} />
@@ -75,6 +78,8 @@ function App() {
         <Route path="/mantenimientos/detallar/:id" element={<DetalleMantenimiento />} />
         <Route path="/mantenimientos/modificar/:id" element={<EditarMantenimiento />} />
 
+        
+        <Route path="/home" element={<Home />} />
       </Routes>
     </Router>
   );
