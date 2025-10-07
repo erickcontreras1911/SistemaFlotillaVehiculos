@@ -1,12 +1,15 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "engines": { "node": ">=18" },
+  "description": "",
   "main": "index.js",
+  "type": "commonjs",
+  "engines": { "node": ">=18 <24" },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -20,7 +23,5 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.14.0",
     "pdfkit": "^0.17.1"
-  },
-  "keywords": [],
-  "description": ""
+  }
 }
